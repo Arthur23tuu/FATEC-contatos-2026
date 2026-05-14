@@ -4,6 +4,26 @@ const formulario = document.getElementById("formulario")
 const lista = document.getElementById("lista")
 let idEditando = null /*let cria um avariável variável*/
 /*idEditando guarda qual contato está sendo editado.*/
+let fotoBase64 = ""
+const previewInput = document.getElementById("preview-input")
+const previewImage = document.getElementById("preview-image")
+
+function previewImagem({ target }) {
+    const arquivo = target.files[0]
+    if (!arquivo) return
+    previewImage.src = URL.createObjectURL(arquivo)
+    converterBase64(arquivo)
+}
+
+function converterBase64(arquivo) {
+    const reader = new FileReader()
+    reader.onload = function () {
+        fotoBase64 = reader.result
+    }
+    reader.readAsDataURL(arquivo)
+}
+
+previewInput.addEventListener("change", previewImagem)
 
 async function mostrarContatos() {
     lista.innerHTML = ""
@@ -59,12 +79,20 @@ async function mostrarContatos() {
         btnEditar.addEventListener("click", function () {
             document.getElementById("nome").value = contato.nome
             document.getElementById("celular").value = contato.celular
-            document.getElementById("foto").value = contato.foto
             document.getElementById("email").value = contato.email
             document.getElementById("endereco").value = contato.endereco
             document.getElementById("cidade").value = contato.cidade
+            previewImage.src = contato.foto
+            fotoBase64 = contato.foto
             idEditando = contato.id
+
+        window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+        }) /*faz a tela rolar pra cima*/
+
         })
+
     } /*o for termina aqui*/
 }
 
@@ -77,7 +105,7 @@ formulario.addEventListener("submit", async function (event) {
     const contato = {
         nome: document.getElementById("nome").value,
         celular: document.getElementById("celular").value,
-        foto: document.getElementById("foto").value,
+        foto: fotoBase64,
         email: document.getElementById("email").value,
         endereco: document.getElementById("endereco").value,
         cidade: document.getElementById("cidade").value
@@ -91,22 +119,11 @@ formulario.addEventListener("submit", async function (event) {
         await criarContato(contato)
     }
     formulario.reset()
+    previewImage.src = "./img/upload-icon.svg"
+    fotoBase64 = ""
     mostrarContatos()
 })
 mostrarContatos()
 
 /*---------------------------------------------------------------------------------*/ 
 
-/*
-Primeiro, o código importa as funções do arquivo contatos.js, responsáveis por buscar, criar, atualizar e deletar contatos na API.
-
-Depois, o JavaScript pega os elementos do HTML necessários para o funcionamento da página, como o formulário e a div onde os cards serão exibidos. Também é criada a variável idEditando, usada para identificar qual contato está sendo editado.
-
-A função mostrarContatos() busca todos os contatos da API utilizando getContatos(). Em seguida, um for percorre todos os contatos recebidos e cria dinamicamente um card para cada um deles usando createElement() e innerHTML. Cada card mostra as informações do contato e possui dois botões: editar e deletar.
-
-O botão deletar chama a função deletarContato() para remover o contato da API e depois recarrega a lista de contatos na tela.
-
-O botão editar preenche o formulário com os dados do contato selecionado e guarda seu id na variável idEditando para que o sistema saiba qual contato será atualizado.
-
-Por fim, o formulário possui um addEventListener("submit"), que é executado quando o usuário clica em salvar. O preventDefault() impede o recarregamento da página. Os dados dos inputs são armazenados em um objeto contato. Se idEditando possuir algum valor, o contato é atualizado; caso contrário, um novo contato é criado. Depois disso, o formulário é limpo e os contatos são recarregados na tela.
-*/
