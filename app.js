@@ -73,7 +73,7 @@ async function mostrarContatos() {
 
 /*---------------------------------------------------------------------------------*/ 
 
-/*---------------------------------------BOTÃO EDITAR-----------------------------*/
+/*-------------------------------------BOTÃO EDITAR-----------------------------*/
 
         const btnEditar = card.querySelector(".btn-editar")
         btnEditar.addEventListener("click", function () {
@@ -119,7 +119,7 @@ formulario.addEventListener("submit", async function (event) {
         await criarContato(contato)
     }
     formulario.reset()
-    previewImage.src = "./img/upload-icon.svg"
+    previewImage.src="./image/iconeUpload.png"
     fotoBase64 = ""
     mostrarContatos()
 })

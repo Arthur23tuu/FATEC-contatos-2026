@@ -1,6 +1,6 @@
 const BASE_URL = "https://bakcend-fecaf-render.onrender.com/contatos" /*endereço da API*/
 
-/*-----------------------------------função GET--------------------------------------------*/
+/*-----------------------------------função GET---------------------------------------------*/
 
 export async function getContatos() {
   const response = await fetch(BASE_URL) /*fetch() Função nativa do JavaScript usada para acessar APIs. method GET é o padrão do fetch*/
