@@ -4,7 +4,7 @@ const formulario = document.getElementById("formulario")
 const lista = document.getElementById("lista")
 let idEditando = null /*let cria um avariável variável*/
 /*idEditando guarda qual contato está sendo editado.*/
-let fotoBase64 = ""
+let fotoUrl = ""
 const previewInput = document.getElementById("preview-input")
 const previewImage = document.getElementById("preview-image")
 
@@ -12,16 +12,24 @@ function previewImagem({ target }) {
     const arquivo = target.files[0]
     if (!arquivo) return
     previewImage.src = URL.createObjectURL(arquivo)
-    converterBase64(arquivo)
+    uploadCloudinary(arquivo)
 }
 
-function converterBase64(arquivo) {
-    const reader = new FileReader()
-    reader.onload = function () {
-        fotoBase64 = reader.result
-    }
-    reader.readAsDataURL(arquivo)
+async function uploadCloudinary(arquivo) {
+    const formData = new FormData()
+    formData.append("file", arquivo)
+    formData.append("upload_preset", "contatos")
+    const response = await fetch(
+        "https://api.cloudinary.com/v1_1/dax5dntte/image/upload",
+        {
+            method: "POST",
+            body: formData
+        }
+    )
+    const dados = await response.json()
+    fotoUrl = dados.secure_url
 }
+
 
 previewInput.addEventListener("change", previewImagem)
 
@@ -83,7 +91,7 @@ async function mostrarContatos() {
             document.getElementById("endereco").value = contato.endereco
             document.getElementById("cidade").value = contato.cidade
             previewImage.src = contato.foto
-            fotoBase64 = contato.foto
+            fotoUrl = contato.foto
             idEditando = contato.id
 
         window.scrollTo({
@@ -105,7 +113,7 @@ formulario.addEventListener("submit", async function (event) {
     const contato = {
         nome: document.getElementById("nome").value,
         celular: document.getElementById("celular").value,
-        foto: fotoBase64,
+        foto: fotoUrl,
         email: document.getElementById("email").value,
         endereco: document.getElementById("endereco").value,
         cidade: document.getElementById("cidade").value
@@ -120,7 +128,7 @@ formulario.addEventListener("submit", async function (event) {
     }
     formulario.reset()
     previewImage.src="./image/iconeUpload.png"
-    fotoBase64 = ""
+    fotoUrl = ""
     mostrarContatos()
 })
 mostrarContatos()
