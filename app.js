@@ -1,12 +1,15 @@
 import {getContatos, criarContato, deletarContato, atualizarContato} from "./contatos.js"
 
-const formulario = document.getElementById("formulario")
-const lista = document.getElementById("lista")
 let idEditando = null /*let cria um avariável variável*/
 /*idEditando guarda qual contato está sendo editado.*/
 let fotoUrl = ""
-const previewInput = document.getElementById("preview-input")
-const previewImage = document.getElementById("preview-image")
+const app = document.getElementById("app")
+
+function iniciarCrud() {
+    const formulario = document.getElementById("formulario")
+    const lista = document.getElementById("lista")
+    const previewInput = document.getElementById("preview-input")
+    const previewImage = document.getElementById("preview-image")
 
 function previewImagem({ target }) {
     const arquivo = target.files[0]
@@ -31,7 +34,6 @@ async function uploadCloudinary(arquivo) {
 }
 
 
-previewInput.addEventListener("change", previewImagem)
 
 async function mostrarContatos() {
     lista.innerHTML = ""
@@ -131,7 +133,77 @@ formulario.addEventListener("submit", async function (event) {
     fotoUrl = ""
     mostrarContatos()
 })
+
+previewInput.addEventListener("change", previewImagem)
+
 mostrarContatos()
 
-/*---------------------------------------------------------------------------------*/ 
+} /*aqui fecha o iniciarCrud()*/
 
+/*---------------------------------------------------------------------------------*/
+
+function mostrarLogin() {
+    app.innerHTML = `
+        <section class="login-container">
+            <form class="login-form" id="login-form">
+                <h2>Login</h2>
+                <input 
+                    type="email"
+                    placeholder="Email"
+                    required
+                >
+                <input 
+                    type="password"
+                    placeholder="Senha"
+                    required
+                >
+                <button class="btn-login">
+                    Entrar
+                </button>
+            </form>
+        </section>
+    `
+    const loginForm = document.getElementById("login-form")
+    loginForm.addEventListener("submit", function(event){
+        event.preventDefault()
+        mostrarSistema()
+    })
+}
+
+function mostrarSistema() {
+
+    app.innerHTML = `
+        <section class="form-section">
+            <form id="formulario" class="form-container">
+                <h2>Adicionar Novo Contato</h2>
+                    <div class="preview-container">
+                        <input 
+                        type="file"
+                        id="preview-input"
+                        class="preview-input"
+                        accept="image/*">
+                        <label for="preview-input" class="preview-label">
+                        <img 
+                        id="preview-image"
+                        class="preview-image"
+                        src="./image/iconeUpload.png"
+                        alt="upload">
+                        </label>
+                    </div>
+                <input type="text" id="nome" placeholder="Nome" required>
+                <input type="text" id="celular" placeholder="Celular" required>
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="text" id="endereco" placeholder="Endereço" required>
+                <input type="text" id="cidade" placeholder="Cidade" required>
+                <button type="submit" class="btn-salvar">Salvar Contato</button>
+            </form>
+        </section>
+
+        <section class="list-section">
+            <div id="lista" class="lista-contatos"></div>
+        </section>
+        `
+    iniciarCrud()
+}
+
+mostrarLogin()
